@@ -27,18 +27,20 @@ if (!function_exists('postImageUrl')) {
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#f7f8f3">
+    <meta name="theme-color" content="#f4f6fb">
+    <script>try { if (localStorage.getItem('travel-guide-theme') === 'dark') document.documentElement.classList.add('dark-mode'); } catch (e) {}</script>
     <title><?= htmlspecialchars($pageTitle ?? 'Travel Guide') ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= $baseUrl ?? '../' ?>asset/css/style.css">
     <link rel="stylesheet" href="<?= $baseUrl ?? '../' ?>asset/css/enhancements.css">
     <link rel="stylesheet" href="<?= $baseUrl ?? '../' ?>asset/css/star-theme.css">
+    <link rel="stylesheet" href="<?= $baseUrl ?? '../' ?>asset/css/light-theme.css">
 </head>
 <body>
 <header class="navbar">
     <a class="brand" href="<?= $baseUrl ?? '../' ?>index.php"><img class="brand-logo" src="<?= $baseUrl ?? '../' ?>asset/img/travel-guide-logo.svg" alt=""><span class="brand-name">Travel Guide</span></a>
-    <nav aria-label="Main navigation">
+    <nav id="primary-navigation" aria-label="Main navigation">
         <?php if (!$loggedIn): ?>
             <a href="<?= $baseUrl ?? '../' ?>view/posts/browse.php">Explore</a>
             <a href="<?= $baseUrl ?? '../' ?>view/auth/login.php">Log in</a>
@@ -65,6 +67,11 @@ if (!function_exists('postImageUrl')) {
             <a href="<?= $baseUrl ?? '../' ?>controller/auth/AuthController.php?action=logout" class="btn-nav">Log out</a>
         <?php endif; ?>
     </nav>
+    <button class="mobile-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="primary-navigation"><span></span><span></span><span></span></button>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch theme">
+        <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 15.1A8.5 8.5 0 0 1 8.9 3.8 8.6 8.6 0 1 0 20.2 15.1Z"/></svg>
+        <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>
+    </button>
 </header>
 <?php if (isset($_SESSION['flash'])): $type = $_SESSION['flash_type'] ?? 'success'; ?>
     <div class="flash-wrap"><div class="alert alert-<?= htmlspecialchars($type) ?>"><?= htmlspecialchars($_SESSION['flash']) ?></div></div>
