@@ -1,17 +1,12 @@
-<?php
-$activePage = $activePage ?? '';
-?>
-<nav class="navbar">
-    <a href="/Travel-Guide/view/scout/dashboard.php" class="brand">&#9992; Travel<span>Guide</span> <small style="font-size:.7rem;opacity:.7">Scout - <?= $_SESSION['name'] ?></small></a> 
-
-    <nav>
-        <a href="/Travel-Guide/view/scout/dashboard.php"      class="<?= $activePage==='dashboard'   ?'active':'' ?>">Dashboard</a>
-        <a href="/Travel-Guide/view/scout/create_request.php" class="<?= $activePage==='create'      ?'active':'' ?>">New Request</a>
-        <a href="/Travel-Guide/view/scout/my_requests.php"    class="<?= $activePage==='my-requests' ?'active':'' ?>">My Requests</a>
-        <a href="/Travel-Guide/view/scout/approved_posts.php" class="<?= $activePage==='approved'    ?'active':'' ?>">Approved Posts</a>
-        <!-- <a href="../../controller/logout.php" class="logout">Logout</a> -->
-        <a href="/Travel-Guide/view/profile/index.php">Profile</a>
-        <a href="../../controller/auth/AuthController.php?action=logout" class="btn-nav">Logout</a>
-         
+<?php $activePage = $activePage ?? ''; ?>
+<header class="navbar">
+    <a href="../../index.php" class="brand"><img class="brand-logo" src="../../asset/img/travel-guide-logo.svg" alt=""><span class="brand-name">Travel Guide</span><small class="scout-label">Scout space</small></a>
+    <nav aria-label="Scout navigation">
+        <a href="dashboard.php" class="<?= $activePage==='dashboard'?'active':'' ?>">Dashboard</a>
+        <a href="create_request.php" class="<?= $activePage==='create'?'active':'' ?>">New request</a>
+        <a href="my_requests.php" class="<?= $activePage==='my-requests'?'active':'' ?>">My requests</a>
+        <a href="approved_posts.php" class="<?= $activePage==='approved'?'active':'' ?>">Published</a>
+        <a href="../profile/index.php">Profile</a>
+        <a href="../../controller/auth/AuthController.php?action=logout" class="btn-nav">Log out</a>
     </nav>
-</nav>
+</header>

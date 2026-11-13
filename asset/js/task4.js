@@ -17,80 +17,26 @@ function escapeHtml(value) {
         .replace(/'/g, '&#039;');
 }
 
-// Render posts in the grid (used by browse.php)
-function renderPosts(posts) {
-    const postGrid = document.getElementById('postGrid');
-    if (!postGrid) return;
-
-    if (!posts || posts.length === 0) {
-        postGrid.innerHTML = '<p class="empty-message">No approved posts found.</p>';
-        return;
-    }
-
-    postGrid.innerHTML = posts.map(post => {
-        const title = escapeHtml(post.title);
-        const country = escapeHtml(post.country);
-        const genre = escapeHtml(post.genre);
-        const costLevel = escapeHtml(post.cost_level);
-        const excerpt = escapeHtml(post.short_history.substring(0, 140));
-
-        return `
-            <article class="card post-card">
-                <div class="card-header">
-                    <h2>${title}</h2>
-                </div>
-                <div class="card-body">
-                    <div class="post-meta">
-                        <span class="badge badge-country">${country}</span>
-                        <span class="badge badge-genre">${genre}</span>
-                        <span class="badge badge-cost cost-${costLevel}">${costLevel.charAt(0).toUpperCase() + costLevel.slice(1)}</span>
-                    </div>
-                    <p>${excerpt}...</p>
-                </div>
-                <div class="card-footer">
-                    <a class="btn btn-primary" href="details.php?id=${encodeURIComponent(post.id)}">Read More</a>
-                </div>
-            </article>
-        `;
-    }).join('');
+// Filter the approved cards already rendered by PHP.
+function updateSearch() {
+    const query = (document.getElementById('searchBox')?.value || '').trim().toLowerCase();
+    const country = (document.getElementById('countryFilter')?.value || '').toLowerCase();
+    const genre = (document.getElementById('genreFilter')?.value || '').toLowerCase();
+    const cost = (document.getElementById('costFilter')?.value || '').toLowerCase();
+    const cards = [...document.querySelectorAll('.browse-card')];
+    let visible = 0;
+    cards.forEach(card => {
+        const match = (!query || card.dataset.title.includes(query) || card.dataset.country.includes(query)) &&
+            (!country || card.dataset.country === country) && (!genre || card.dataset.genre === genre) && (!cost || card.dataset.cost === cost);
+        card.hidden = !match;
+        if (match) visible++;
+    });
+    const count = document.getElementById('resultCount');
+    if (count) count.textContent = `${visible} ${visible === 1 ? 'destination' : 'destinations'}`;
+    const empty = document.getElementById('noResults');
+    if (empty) empty.hidden = cards.length === 0 || visible !== 0;
 }
-
-// Request posts from controller
-async function requestPosts(action, params) {
-    const response = await fetch(`../../controllers/Task4/Task4PostController.php?action=${action}&${params}`);
-    return await response.json();
-}
-
-// Update search results
-async function updateSearch() {
-    const searchBox = document.getElementById('searchBox');
-    if (!searchBox) return;
-
-    const params = new URLSearchParams({ q: searchBox.value.trim() });
-    const data = await requestPosts('search', params.toString());
-    renderPosts(data.success ? data.posts : []);
-}
-
-// Update filter results
-async function updateFilter() {
-    const countryFilter = document.getElementById('countryFilter');
-    const genreFilter = document.getElementById('genreFilter');
-    const costFilter = document.getElementById('costFilter');
-    if (!countryFilter || !genreFilter || !costFilter) return;
-
-    const params = new URLSearchParams();
-    if (countryFilter.value) {
-        params.append('country', countryFilter.value);
-    }
-    if (genreFilter.value) {
-        params.append('genre', genreFilter.value);
-    }
-    if (costFilter.value) {
-        params.append('cost_level', costFilter.value);
-    }
-    const data = await requestPosts('filter', params.toString());
-    renderPosts(data.success ? data.posts : []);
-}
+function updateFilter() { updateSearch(); }
 
 // Initialize browse page event listeners
 function initBrowsePage() {
@@ -121,6 +67,7 @@ function initBrowsePage() {
             updateSearch();
         });
     }
+    updateSearch();
 }
 
 // ============ Details Page Functions ============
@@ -141,7 +88,7 @@ async function addComment(event) {
 
     const formData = new FormData(commentForm);
     try {
-        const response = await fetch(`../../controllers/Task4/Task4CommentController.php?action=add`, {
+        const response = await fetch(`../../controller/Task4/Task4CommentController.php?action=add`, {
             method: 'POST',
             body: formData
         });
@@ -184,7 +131,7 @@ async function deleteComment(event) {
     formData.append('comment_id', commentId);
 
     try {
-        const response = await fetch(`../../controllers/Task4/Task4CommentController.php?action=delete`, {
+        const response = await fetch(`../../controller/Task4/Task4CommentController.php?action=delete`, {
             method: 'POST',
             body: formData
         });
@@ -234,7 +181,7 @@ async function calculateCost() {
     formData.append('days', days);
 
     try {
-        const response = await fetch(`../../controllers/Task4/Task4CostController.php?action=estimate`, {
+        const response = await fetch(`../../controller/Task4/Task4CostController.php?action=estimate`, {
             method: 'POST',
             body: formData
         });
